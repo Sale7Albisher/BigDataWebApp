@@ -1,5 +1,5 @@
 import React from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 const MapView = ({ tweets }) => {
@@ -8,16 +8,23 @@ const MapView = ({ tweets }) => {
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="&copy; OpenStreetMap contributors"
-        noWrap={true} // Prevent multiple Earth maps
+        noWrap={true} 
         bounds={[
-          [-90, -180], // Southwest corner
-          [90, 180],   // Northeast corner
+          [-90, -180], 
+          [90, 180],   
         ]}
       />
       {tweets.map((tweet) => (
-        <Marker position={[tweet.geo.lat, tweet.geo.lon]} key={tweet.id}>
+        <CircleMarker
+          key={tweet.id}
+          center={[tweet.geo.lat, tweet.geo.lon]}
+          radius={1.7} 
+          fillColor="red" 
+          color="red" 
+          fillOpacity={0.7} 
+        >
           <Popup>{tweet.text}</Popup>
-        </Marker>
+        </CircleMarker>
       ))}
     </MapContainer>
   );
