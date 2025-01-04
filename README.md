@@ -108,7 +108,7 @@ GET  /api/tweets/trends          // Get trending topics
 POST /api/tweets/filter          // Apply complex filters
 ```
 
-![image](https://github.com/user-attachments/assets/cf098aaf-8b11-4704-b6bf-6cfcc93cebce)
+![image](https://github.com/user-attachments/assets/0f7aea26-38bd-44cf-914b-c69f4bf1d160)
 
 
 
