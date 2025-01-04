@@ -9,12 +9,10 @@ function App() {
   const [sentiment, setSentiment] = useState({ type: "neutral", proportion: 0 });
   const [trendData, setTrendData] = useState([]);
   const [streaming, setStreaming] = useState(false);
-  const scrollRef = useRef(null);
 
   const handleSearch = (keyword, interval = "daily") => {
     if (streaming) return;
 
-    const currentScrollPos = scrollRef.current ? scrollRef.current.scrollTop : 0;
 
     const eventSource = new EventSource(
       `http://localhost:5000/api/tweets-stream?keyword=${keyword}&interval=${interval}`
@@ -35,9 +33,7 @@ function App() {
       setStreaming(false);
       eventSource.close();
 
-      if (scrollRef.current) {
-        scrollRef.current.scrollTop = currentScrollPos;
-      }
+     
     });
 
     eventSource.onerror = (error) => {
@@ -58,7 +54,7 @@ function App() {
     <div className="App" style={{ backgroundColor: "#131722", color: "white", minHeight: "100vh" }}>
       <h1 style={{ textAlign: "center", marginBottom: "100px" }}>Twitter Stream Visualization</h1>
       <SearchBar onSearch={handleSearch} />
-      <div ref={scrollRef} style={{ overflowY: "scroll", maxHeight: "80vh" }}>
+      <div style={{ overflowY: "scroll", maxHeight: "80vh" }}>
         <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
           <div style={{ flex: 1, marginRight: "20px", marginTop: "37px" }}>
             <MapView tweets={tweets} />
