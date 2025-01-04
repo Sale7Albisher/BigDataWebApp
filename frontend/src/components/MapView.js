@@ -14,10 +14,10 @@ const MapView = ({ tweets }) => {
           [90, 180],   
         ]}
       />
-      {tweets.map((tweet) => (
+      {tweets.map((tweet) => tweet?.location?.coordinates?.latitude && (
         <CircleMarker
           key={tweet.id}
-          center={[tweet.geo.lat, tweet.geo.lon]}
+          center={[tweet?.location?.coordinates?.latitude || 0, tweet?.location?.coordinates?.longitude || 0]}
           radius={1.7} 
           fillColor="red" 
           color="red" 

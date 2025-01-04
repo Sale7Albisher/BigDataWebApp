@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const tweetSchema = new mongoose.Schema(
   {
-
     id: { type: String, unique: true, required: true },
     text: { type: String, required: true },
     username: { type: String, required: true },
@@ -12,15 +11,18 @@ const tweetSchema = new mongoose.Schema(
       label: { type: String, required: true },
     },
     created_at: { type: String, required: true },
-    geo: {
-      lat: { type: Number, required: false },
-      lon: { type: Number, required: false },
+    location: {
+      type: {
+        type: String, 
+        default: "Point",
+      },
+      coordinates: {
+        latitude: { type: Number, required: false },
+        longitude: { type: Number, required: false },
+      },
     },
   },
-  { collection: "stream_data" }
+  { collection: "tweets" }
 );
-
-
-
 
 module.exports = mongoose.model("Tweet", tweetSchema);

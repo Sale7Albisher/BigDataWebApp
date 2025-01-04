@@ -76,9 +76,15 @@ app.get("/api/tweets-stream", async (req, res) => {
       const intervals = {};
 
       tweets.forEach((tweet) => {
-        const date = new Date(tweet.created_at);
-        let key;
+        const date = new Date(tweet.timestamp); 
+    
+        if (isNaN(date)) {
+          console.error("Invalid timestamp:", tweet.timestamp);
+          return; 
+        }
 
+        let key;
+        
         if (interval === "daily") {
           key = date.toISOString().split("T")[0];
         } else if (interval === "hourly") {
@@ -92,11 +98,11 @@ app.get("/api/tweets-stream", async (req, res) => {
         }
         intervals[key]++;
       });
-
+    
       const sortedEntries = Object.entries(intervals).sort(
         ([a], [b]) => new Date(a) - new Date(b)
       );
-
+    
       return sortedEntries.map(([time, count]) => ({ time, count }));
     };
 
