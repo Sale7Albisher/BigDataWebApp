@@ -107,7 +107,7 @@ GET  /api/tweets/sentiment       // Get sentiment analysis
 GET  /api/tweets/trends          // Get trending topics
 POST /api/tweets/filter          // Apply complex filters
 ```
-
+How WebApp work with streaming data 
 ![image](https://github.com/user-attachments/assets/0f7aea26-38bd-44cf-914b-c69f4bf1d160)
 
 
