@@ -10,56 +10,58 @@ const TrendChart = ({ trendData }) => {
       console.log("No trend data available.");
       return;
     }
-
+  
+    const sortedTrendData = [...trendData].sort((a, b) => new Date(a.time) - new Date(b.time));
+  
     if (chartRef.current) {
       chartRef.current.destroy();
     }
-
+  
     const ctx = canvasRef.current.getContext("2d");
     chartRef.current = new Chart(ctx, {
       type: "line",
       data: {
-        labels: trendData.map((point) => point.time),
+        labels: sortedTrendData.map((point) => point.time),
         datasets: [
           {
             label: "Tweet Count",
-            data: trendData.map((point) => point.count),
+            data: sortedTrendData.map((point) => point.count),
             borderColor: "rgb(140, 40, 153)",
             borderWidth: 3,
-            fill: true, 
-            backgroundColor: "rgba(140, 40, 153, 0.2)", 
-            pointRadius: 5, 
-            pointBackgroundColor: "rgb(140, 40, 153)", 
-            pointHoverRadius: 8, 
-            tension: 0.4, 
-            borderCapStyle: "round", 
-            borderJoinStyle: "round", 
-            hoverBackgroundColor: "rgba(140, 40, 153, 0.5)", 
+            fill: true,
+            backgroundColor: "rgba(140, 40, 153, 0.2)",
+            pointRadius: 5,
+            pointBackgroundColor: "rgb(140, 40, 153)",
+            pointHoverRadius: 8,
+            tension: 0.4,
+            borderCapStyle: "round",
+            borderJoinStyle: "round",
+            hoverBackgroundColor: "rgba(140, 40, 153, 0.5)",
           },
         ],
       },
       options: {
         responsive: true,
         interaction: {
-          mode: "nearest", 
-          intersect: false, 
+          mode: "nearest",
+          intersect: false,
         },
         plugins: {
           legend: {
             position: "top",
             labels: {
-              color: "white", 
+              color: "white",
               font: {
                 size: 14,
               },
             },
           },
           tooltip: {
-            backgroundColor: "rgba(0, 0, 0, 0.7)", 
-            titleColor: "white", 
-            bodyColor: "white", 
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            titleColor: "white",
+            bodyColor: "white",
             bodyFont: {
-              size: 14, 
+              size: 14,
             },
           },
         },
@@ -72,12 +74,12 @@ const TrendChart = ({ trendData }) => {
             },
             grid: {
               color: "white",
-              borderDash: [5, 5], 
+              borderDash: [5, 5],
             },
             ticks: {
               color: "white",
               font: {
-                size: 12, 
+                size: 12,
               },
             },
           },
@@ -89,30 +91,31 @@ const TrendChart = ({ trendData }) => {
             },
             grid: {
               color: "white",
-              borderDash: [5, 5], 
+              borderDash: [5, 5],
             },
             ticks: {
-              color: "white", 
+              color: "white",
               font: {
-                size: 12, 
+                size: 12,
               },
             },
           },
         },
         elements: {
           line: {
-            tension: 0.4, 
+            tension: 0.4,
           },
         },
       },
     });
-
+  
     return () => {
       if (chartRef.current) {
         chartRef.current.destroy();
       }
     };
   }, [trendData]);
+  
 
   return (
     <>

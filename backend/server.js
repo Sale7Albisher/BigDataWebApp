@@ -19,9 +19,7 @@ app.get("/api/tweets-stream", async (req, res) => {
   const { keyword, interval = "daily", chunkSize = 10 } = req.query;
 
   try {
-    const query = keyword
-      ? { text: { $regex: new RegExp(keyword, "i") } }
-      : {};
+    const query = keyword ? { text: { $regex: new RegExp(keyword, "i") } } : {};
     const tweets = await Tweet.find(query);
 
     res.setHeader("Content-Type", "text/event-stream");
@@ -35,26 +33,43 @@ app.get("/api/tweets-stream", async (req, res) => {
       if (index >= totalTweets) {
         res.write("event: done\n");
         res.write("data: {}\n\n");
-        res.end(); 
+        res.end();
         return;
       }
 
       const chunk = tweets.slice(index, index + chunkSize);
       const trendData = groupByInterval(chunk, interval);
-      const totalSentiment = chunk.reduce((sum, tweet) => sum + (tweet.sentiment || 0), 0);
-      const avgSentiment = chunk.length ? totalSentiment / chunk.length : 0;
+
+      const sentimentCounts = chunk.reduce(
+        (counts, tweet) => {
+          counts[tweet.sentiment.label] = (counts[tweet.sentiment.label] || 0) + 1;
+          return counts;
+        },
+        { positive: 0, negative: 0, neutral: 0 }
+      );
+
+      const mostCommonType = Object.keys(sentimentCounts).reduce((a, b) =>
+        sentimentCounts[a] > sentimentCounts[b] ? a : b
+      );
+
+      const mostCommonProportion = totalTweets
+        ? sentimentCounts[mostCommonType] / totalTweets
+        : 0;
 
       res.write(`event: chunk\n`);
       res.write(
         `data: ${JSON.stringify({
           tweets: chunk,
           trendData,
-          sentiment: avgSentiment,
+          sentiment: {
+            type: mostCommonType,
+            proportion: mostCommonProportion,
+          },
         })}\n\n`
       );
 
       index += chunkSize;
-      setTimeout(sendChunk, 2000); 
+      setTimeout(sendChunk, 2000);
     };
 
     const groupByInterval = (tweets, interval) => {
@@ -78,15 +93,20 @@ app.get("/api/tweets-stream", async (req, res) => {
         intervals[key]++;
       });
 
-      return Object.entries(intervals).map(([time, count]) => ({ time, count }));
+      const sortedEntries = Object.entries(intervals).sort(
+        ([a], [b]) => new Date(a) - new Date(b)
+      );
+
+      return sortedEntries.map(([time, count]) => ({ time, count }));
     };
 
-    sendChunk(); 
+    sendChunk();
   } catch (error) {
     console.error("Error fetching tweets:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 
 
